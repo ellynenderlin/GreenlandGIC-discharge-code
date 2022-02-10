@@ -331,8 +331,9 @@ cd ..
 
 
 %display more info on the change in glacier data availability before & after 1999
-fprintf('Percent discharge by largest glaciers before 1999 = %3.1f - %3.1f percent\n',nanmedian(nansum(Dbig(:,1:14))./(nansum(Dfilled(:,1:14))+nansum(Dearly_incomplete)))*100,nanmedian(nansum(Dbig(:,1:14))./nansum(Dfilled(:,1:14)))*100);
-fprintf('Percent discharge by largest glaciers from 1999-2018 = %3.1fpercent\n',nanmedian(nansum(Dbig(:,15:end))./nansum(Dfilled(:,15:end)))*100);
+fprintf('Percent discharge by largest glaciers before 1999 = %3.1f - %3.1f percent\n',(nansum(Dbig(:,1:14))./nansum(nanmean(Wtotal,2)))*100);
+
+
 fprintf('Percent width of glaciers w/o pre-1999 data = %3.1f percent\n',(nansum(nanmean(Wtotal(complete_flag==0,:),2))./nansum(nanmean(Wtotal,2)))*100);
 fprintf('Percent discharge by glaciers w/o pre-1999 data = %3.1f percent\n',nanmean(nansum(Dlate_incomplete,1)./nansum(Dfilled(:,15:end),1))*100);
 fprintf('Median percent change in discharge by glaciers w/ complete gap-filled records = %3.1f percent\n',nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2))*100);
