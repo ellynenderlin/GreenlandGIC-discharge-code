@@ -52,8 +52,7 @@ GrIS_GIC_badpair = [23 41]; %Mankoff glaciers have flow-following gates
 % UWH_upper = UWH+2*delta; UWH_lower = UWH-2*delta; 
 
 %output from GreenlandGIC_thickness_extrapolation_curves.m
-load H_vs_U_logarithmic-functions.mat;
-% load H_vs_WdivU_linear-functions.mat; 
+% load H_vs_U_logarithmic-functions.mat; 
 disp('Loaded data to create discharge timeseries');
 
 Dtotal = []; Dtotal_err = []; Dx = []; Dy = []; DBoxID = []; Dupper = []; Dlower = [];
@@ -62,85 +61,85 @@ for i = 1:length(term)
 %     disp(['glacier ',num2str(i),' of ',num2str(length(term))]);
     BoxID(i) = term(i).BoxID;
     
-    %create thickness cross sections at the flux gate
-    glacier_width = sqrt((term(i).gateX(1) - term(i).gateX(end)).^2 + (term(i).gateY(1)-term(i).gateY(end)).^2);
-    gate_vel = nanmedian(term(i).fluxV,1); gate_width = term(i).fluxW;
-    gate_H = NaN(size(gate_vel)); gate_Hmax = NaN(size(gate_vel)); gate_Hmin = NaN(size(gate_vel));
-    
-%         %if using the parabolic UW vs D trendline
-%         parab_refs = find(gate_vel(1,:)*glacier_width<=max(f.xlims));
-%         if ~isempty(parab_refs)
-%             gate_H(1,parab_refs) = ((f.fit.p1.*((gate_vel(1,parab_refs)*glacier_width).^2) + f.fit.p2.*(gate_vel(1,parab_refs)*glacier_width) + f.fit.p3).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
-%             gate_Hmin(1,parab_refs) = ((ci(1,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(1,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(1,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
-%             gate_Hmax(1,parab_refs) = ((ci(2,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(2,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(2,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
-%         end
-%         clear parab_refs;
-%         %extrapolate with linear trendlines if necessary
-%         linear_refs = find(gate_vel(1,:)*glacier_width>max(f.xlims));
-%         if ~isempty(linear_refs)
-%             gate_H(1,linear_refs) = ((f.ext.p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-%             gate_Hmin(1,linear_refs) = ((f.ext.cil_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.cil_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-%             gate_Hmax(1,linear_refs) = ((f.ext.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.ciu_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-%         end
-%         clear linear_refs;
-%         linear_refs = find(gate_vel(1,:)*glacier_width<min(f.xlims));
-%         if ~isempty(linear_refs)
-%             gate_H(1,linear_refs) = (f.int.p1.*(gate_vel(1,linear_refs)*glacier_width).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-%             gate_Hmin(1,linear_refs) = ((f.int.cil_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-%             gate_Hmax(1,linear_refs) = ((f.int.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-%         end
-%         clear linear_refs;
-    
-%     %if using the linear UW vs D trendline
-%     gate_H(1,:) = (UWfit.p1.*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
-%     gate_Hmin(1,:) = (min(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
-%     gate_Hmax(1,:) = (max(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
-    
-%     %if using the linear W/U vs H trendline
-%     gate_H(1,:) = H_fit.*(glacier_width./gate_vel(1,:));
-%     gate_Hmin(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
-%     gate_Hmax(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
-
-    %if using the logarithmic U vs H trendline
-    gate_H(1,:) = UHfit.a.*log10(gate_vel(1,:))+UHfit.b.*gate_vel(1,:);
-    gate_Hmin(1,:) = UHfit_min.a.*log10(gate_vel(1,:))+UHfit_min.b.*gate_vel(1,:);
-    gate_Hmax(1,:) = UHfit_max.a.*log10(gate_vel(1,:))+UHfit_max.b.*gate_vel(1,:);
-    
-    %add H estimates to structure
-    gate_H(gate_H<0) = 0; gate_Hmin(gate_Hmin<0) = 0; gate_Hmax(gate_Hmax<0) = 0;
-    term(i).fluxH = gate_H; term(i).fluxHmax = gate_Hmax; term(i).fluxHmin = gate_Hmin;
-    
-    %construct discharge time series
-    gate_D = term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1).*repmat(gate_width,size(term(i).fluxV,1),1);
-    D = nansum(gate_D,2);
-    %propagate errors
-    gate_Verr = term(i).fluxVerr;
-    gate_Werr = zeros(size(gate_width)); gate_Werr(1) = gate_Werr(1) + 15; gate_Werr(end) = gate_Werr(end) + 15; term(i).fluxWerr = gate_Werr;
-    gate_Hposerr = repmat((term(i).fluxHmax-term(i).fluxH),size(term(i).fluxV,1),1); gate_Hnegerr = repmat((term(i).fluxHmin-term(i).fluxH),size(term(i).fluxV,1),1);
-    gate_VHposcov = cov(gate_Hposerr,gate_Verr); gate_VHnegcov = cov(gate_Hnegerr,gate_Verr); 
-    gate_Dposerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hposerr./term(i).fluxH.^2 +...
-        2*repmat(gate_VHposcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
-        repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
-    gate_Dnegerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hnegerr./term(i).fluxH.^2 +...
-        2*repmat(gate_VHnegcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
-        repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
-    Dposerr = sqrt(nansum(gate_Dposerr.^2,2)); Dnegerr = sqrt(nansum(gate_Dnegerr.^2,2)); 
-    clear glacier_width gate_*;
-    term(i).fluxD = D; term(i).fluxDmax = term(i).fluxD + Dposerr; term(i).fluxDmin = term(i).fluxD - Dnegerr; 
-    term(i).fluxDerr = nanmean([Dposerr Dnegerr],2); term(i).fluxDyrs = D_yrs';
-    
-%     %save after every 50 glaciers
-%     counter = counter+1;
-%     if counter == 50
-%         disp('resaving');
-%         eval(cd_to_root);
-%         save('Greenland_GIC_centerlines.mat','term','-v7.3');
-%         counter = 0;
-%         eval(cd_to_vels);
-%     end
-    
-    %clear the old variables
-    clear D Derr gate*
+%     %create thickness cross sections at the flux gate
+%     glacier_width = sqrt((term(i).gateX(1) - term(i).gateX(end)).^2 + (term(i).gateY(1)-term(i).gateY(end)).^2);
+%     gate_vel = nanmedian(term(i).fluxV,1); gate_width = term(i).fluxW;
+%     gate_H = NaN(size(gate_vel)); gate_Hmax = NaN(size(gate_vel)); gate_Hmin = NaN(size(gate_vel));
+%     
+% %         %if using the parabolic UW vs D trendline
+% %         parab_refs = find(gate_vel(1,:)*glacier_width<=max(f.xlims));
+% %         if ~isempty(parab_refs)
+% %             gate_H(1,parab_refs) = ((f.fit.p1.*((gate_vel(1,parab_refs)*glacier_width).^2) + f.fit.p2.*(gate_vel(1,parab_refs)*glacier_width) + f.fit.p3).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
+% %             gate_Hmin(1,parab_refs) = ((ci(1,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(1,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(1,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
+% %             gate_Hmax(1,parab_refs) = ((ci(2,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(2,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(2,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
+% %         end
+% %         clear parab_refs;
+% %         %extrapolate with linear trendlines if necessary
+% %         linear_refs = find(gate_vel(1,:)*glacier_width>max(f.xlims));
+% %         if ~isempty(linear_refs)
+% %             gate_H(1,linear_refs) = ((f.ext.p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+% %             gate_Hmin(1,linear_refs) = ((f.ext.cil_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.cil_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+% %             gate_Hmax(1,linear_refs) = ((f.ext.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.ciu_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+% %         end
+% %         clear linear_refs;
+% %         linear_refs = find(gate_vel(1,:)*glacier_width<min(f.xlims));
+% %         if ~isempty(linear_refs)
+% %             gate_H(1,linear_refs) = (f.int.p1.*(gate_vel(1,linear_refs)*glacier_width).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+% %             gate_Hmin(1,linear_refs) = ((f.int.cil_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+% %             gate_Hmax(1,linear_refs) = ((f.int.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+% %         end
+% %         clear linear_refs;
+%     
+% %     %if using the linear UW vs D trendline
+% %     gate_H(1,:) = (UWfit.p1.*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
+% %     gate_Hmin(1,:) = (min(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
+% %     gate_Hmax(1,:) = (max(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
+%     
+% %     %if using the linear W/U vs H trendline
+% %     gate_H(1,:) = H_fit.*(glacier_width./gate_vel(1,:));
+% %     gate_Hmin(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
+% %     gate_Hmax(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
+% 
+%     %if using the logarithmic U vs H trendline
+%     gate_H(1,:) = UHfit.a.*log10(gate_vel(1,:))+UHfit.b.*gate_vel(1,:);
+%     gate_Hmin(1,:) = UHfit_min.a.*log10(gate_vel(1,:))+UHfit_min.b.*gate_vel(1,:);
+%     gate_Hmax(1,:) = UHfit_max.a.*log10(gate_vel(1,:))+UHfit_max.b.*gate_vel(1,:);
+%     
+%     %add H estimates to structure
+%     gate_H(gate_H<0) = 0; gate_Hmin(gate_Hmin<0) = 0; gate_Hmax(gate_Hmax<0) = 0;
+%     term(i).fluxH = gate_H; term(i).fluxHmax = gate_Hmax; term(i).fluxHmin = gate_Hmin;
+%     
+%     %construct discharge time series
+%     gate_D = term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1).*repmat(gate_width,size(term(i).fluxV,1),1);
+%     D = nansum(gate_D,2);
+%     %propagate errors
+%     gate_Verr = term(i).fluxVerr;
+%     gate_Werr = zeros(size(gate_width)); gate_Werr(1) = gate_Werr(1) + 15; gate_Werr(end) = gate_Werr(end) + 15; term(i).fluxWerr = gate_Werr;
+%     gate_Hposerr = repmat((term(i).fluxHmax-term(i).fluxH),size(term(i).fluxV,1),1); gate_Hnegerr = repmat((term(i).fluxHmin-term(i).fluxH),size(term(i).fluxV,1),1);
+%     gate_VHposcov = cov(gate_Hposerr,gate_Verr); gate_VHnegcov = cov(gate_Hnegerr,gate_Verr); 
+%     gate_Dposerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hposerr./term(i).fluxH.^2 +...
+%         2*repmat(gate_VHposcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
+%         repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
+%     gate_Dnegerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hnegerr./term(i).fluxH.^2 +...
+%         2*repmat(gate_VHnegcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
+%         repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
+%     Dposerr = sqrt(nansum(gate_Dposerr.^2,2)); Dnegerr = sqrt(nansum(gate_Dnegerr.^2,2)); 
+%     clear glacier_width gate_*;
+%     term(i).fluxD = D; term(i).fluxDmax = term(i).fluxD + Dposerr; term(i).fluxDmin = term(i).fluxD - Dnegerr; 
+%     term(i).fluxDerr = nanmean([Dposerr Dnegerr],2); term(i).fluxDyrs = D_yrs';
+%     
+% %     %save after every 50 glaciers
+% %     counter = counter+1;
+% %     if counter == 50
+% %         disp('resaving');
+% %         eval(cd_to_root);
+% %         save('Greenland_GIC_centerlines.mat','term','-v7.3');
+% %         counter = 0;
+% %         eval(cd_to_vels);
+% %     end
+%     
+%     %clear the old variables
+%     clear D Derr gate*
     
     %add to the entire GIC timeseries if it is confirmed as
     %marine-terminating and not in the Mankoff GrIS timeseries
@@ -151,6 +150,7 @@ for i = 1:length(term)
         Dupper = [Dupper; term(i).fluxDmax'];
         Dlower = [Dlower; term(i).fluxDmin'];
     end
+    term(i).fluxVavg(term(i).fluxVavg <= 0) = NaN;
 end
 eval(cd_to_root);
 % save('Greenland_GIC_centerlines.mat','term','-v7.3'); disp('date resaved');
@@ -229,6 +229,11 @@ Dlate_complete = Dfilled(complete_flag == 1,15:end); Dearly_complete = Dfilled(c
 Dearly_incomplete = nanmean(Dlate_incomplete,2)./(1+nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2)));
 Dearly_incompleteMIN = nanmean(Dlate_incomplete,2)./(1+(nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2))+mad((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2),1)));
 Dearly_incompleteMAX = nanmean(Dlate_incomplete,2)./(1+(nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2))-mad((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2),1)));
+disp('gap-filled time series & uniform relative change...')
+disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' Gt/yr']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+
 
 %plot glaciers with average annual D > 0.05 Gt/yr
 Dbig = NaN(size(Dtotal)); Dbig_err = NaN(size(Dtotal_err)); Dbig_upper = NaN(size(Dtotal_err)); Dbig_lower = NaN(size(Dtotal_err));
@@ -266,7 +271,7 @@ pl(5) = plot(D_yrs,nansum(Dbig).*917./(1000*10^9),'color',cmap(5,:),'linewidth',
 errorbar(D_yrs,(nansum(Dbig).*917./(1000*10^9)),sqrt(nansum((Dbig-Dbig_lower).^2)).*917./(1000*10^9),sqrt(nansum((Dbig_upper-Dbig).^2)).*917./(1000*10^9),'color',cmap(5,:),'linewidth',1.5);
 legend(pl,['all (n=',num2str(length(Dtotal)),')'],...
     ['filled time gaps (n=',num2str(round(nanmean(sum(~isnan(Dfilled(:,1:14)))))),')'],...
-    ['filled time gaps + extrapolated change (n=',num2str(round(nanmean(sum(~isnan(Dfilled(:,1:14)))))),')'],...
+    ['filled time gaps + uniform change (n=',num2str(round(nanmean(sum(~isnan(Dfilled(:,15:end)))))),')'],...
     ['complete timeseries (n=',num2str(sum(~isnan(Dfiltered(:,end)))),')'],...
     ['D>0.05 Gt/yr (n=',num2str(sum(~isnan(Dbig(:,1)))),')'], 'Location', 'southeast','fontsize',16);
 % title('Annual GICs Discharge 1985-2018 (Gt/yr)');
@@ -285,7 +290,7 @@ for i = 1:length(term)
         
         %concatenate count if there are velocities for that year
         tempcoverage = NaN(size(term(i).fluxVavg));
-        tempcoverage(~isnan(term(i).fluxVavg)) = 1;
+        tempcoverage(~isnan(term(i).fluxVavg) & term(i).fluxD ~= 0) = 1;
         coveragetotal = [coveragetotal; tempcoverage'];
         clear tempwidth tempcoverage;
     end
@@ -343,9 +348,9 @@ fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps = 
 fprintf('Median discharge from 1985-1998 with filled gaps AND assumed uniform change= %4.2f Gt/yr\n',(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete)).*917./(1000*10^9))
 fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps AND assumed uniform change = %4.2f Gt/yr\n',(nanmedian(nansum(Dfilled(:,15:end)))-(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete))).*917./(1000*10^9))
 
-%resave term structure
-eval(cd_to_root);
-save('Greenland_GIC_centerlines.mat','term','-v7.3'); disp('date resaved');
+% %resave term structure
+% eval(cd_to_root);
+% save('Greenland_GIC_centerlines.mat','term','-v7.3'); disp('date resaved');
 
 %% plot regional discharge time series & velocity boxplots
 close all;
@@ -506,21 +511,21 @@ annotation('textbox',[0.65 0.78 0.3 0.05],'string',['e) west speeds (n=',num2str
 southeastVsub = subplot(5,3,6);
 boxplot(southeast_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors',region_cmap(2,:), 'Widths', 0.6, 'LabelOrientation', 'inline','Symbol','','Whisker',0); hold on;
 boxplot(southeast_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors','k', 'Widths', 0.25, 'LabelOrientation', 'inline','BoxStyle','outline'); hold on;
-set(gca,'XTickLabel',{' '}); pos = get(gca,'position');  set(gca,'position',[0.65 pos(2) 0.32 1.25*pos(4)]);
+set(gca,'XTickLabel',{' '}); pos = get(gca,'position');  set(gca,'position',[0.65 pos(2)-0.005 0.32 1.25*pos(4)]);
 set(gca,'fontsize',20);
-annotation('textbox',[0.65 0.6125 0.3 0.05],'string',['f) southeast speeds (n=',num2str(size(southeast_normVall,1)),')'],'fontsize',16,'edgecolor','none')
+annotation('textbox',[0.65 0.6075 0.3 0.05],'string',['f) southeast speeds (n=',num2str(size(southeast_normVall,1)),')'],'fontsize',16,'edgecolor','none')
 centraleastVsub = subplot(5,3,9);
 boxplot(centraleast_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors',region_cmap(3,:), 'Widths', 0.6, 'LabelOrientation', 'inline','Symbol','','Whisker',0); hold on;
 boxplot(centraleast_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors','k', 'Widths', 0.25, 'LabelOrientation', 'inline','BoxStyle','outline'); hold on;
-set(gca,'XTickLabel',{' '}); pos = get(gca,'position');  set(gca,'position',[0.65 pos(2) 0.32 1.25*pos(4)]);
+set(gca,'XTickLabel',{' '}); pos = get(gca,'position');  set(gca,'position',[0.65 pos(2)-0.01 0.32 1.25*pos(4)]);
 set(gca,'fontsize',20);
-annotation('textbox',[0.65 0.44 0.3 0.05],'string',['g) central east speeds (n=',num2str(size(centraleast_normVall,1)),')'],'fontsize',16,'edgecolor','none')
+annotation('textbox',[0.65 0.43 0.3 0.05],'string',['g) central east speeds (n=',num2str(size(centraleast_normVall,1)),')'],'fontsize',16,'edgecolor','none')
 northeastVsub = subplot(5,3,12);
 boxplot(northeast_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors',region_cmap(4,:), 'Widths', 0.6, 'LabelOrientation', 'inline','Symbol','','Whisker',0); hold on;
 boxplot(northeast_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors','k', 'Widths', 0.25, 'LabelOrientation', 'inline','BoxStyle','outline'); hold on;
-set(gca,'XTickLabel',{' '}); pos = get(gca,'position');  set(gca,'position',[0.65 pos(2) 0.32 1.25*pos(4)]);
+set(gca,'XTickLabel',{' '}); pos = get(gca,'position');  set(gca,'position',[0.65 pos(2)-0.015 0.32 1.25*pos(4)]);
 set(gca,'fontsize',20); pos4 = get(gca,'position');
-annotation('textbox',[0.65 0.2675 0.3 0.05],'string',['h) northeast speeds (n=',num2str(size(northeast_normVall,1)),')'],'fontsize',16,'edgecolor','none')
+annotation('textbox',[0.65 0.2525 0.3 0.05],'string',['h) northeast speeds (n=',num2str(size(northeast_normVall,1)),')'],'fontsize',16,'edgecolor','none')
 northVsub = subplot(5,3,15);
 boxplot(north_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors',region_cmap(5,:), 'Widths', 0.6, 'LabelOrientation', 'inline','Symbol','','Whisker',0); hold on;
 boxplot(north_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors','k', 'Widths', 0.25, 'LabelOrientation', 'inline','BoxStyle','outline',...
@@ -529,31 +534,32 @@ boxplot(north_normVall, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'C
     '','',num2str(min(D_yrs)+21),'','',num2str(min(D_yrs)+24),'','',num2str(min(D_yrs)+27),'','',...
     num2str(min(D_yrs)+30),'','',num2str(min(D_yrs)+33)}); hold on;
 % set(gca,'XTickLabel',{' '})
-pos = get(gca,'position'); set(gca,'position',[0.65 pos(2) 0.32 1.25*pos(4)]);
+pos = get(gca,'position'); set(gca,'position',[0.65 pos(2)-0.02 0.32 1.25*pos(4)]);
 set(gca,'fontsize',20); pos5 = get(gca,'position');
 xlabel('Year','fontsize',20); ylbl = ylabel('Normalized speed','fontsize',20);
 set(ylbl,'position',[-4.4141 3.25 -1]);
-annotation('textbox',[0.65 0.0875 0.3 0.05],'string',['i) north speeds (n=',num2str(size(north_normVall,1)),')'],'fontsize',16,'edgecolor','none')
+annotation('textbox',[0.65 0.0675 0.3 0.05],'string',['i) north speeds (n=',num2str(size(north_normVall,1)),')'],'fontsize',16,'edgecolor','none')
 % boxplot(west_normVcomplete, D_yrs, 'PlotStyle', 'compact', 'MedianStyle', 'line', 'Colors', [0.5 0.5 0.5], 'Widths', 0.4,'Symbol','x','LabelOrientation', 'inline'); hold on;
 %add scatterplots for discharge for each region
 Dsub = subplot(5,3,[1:2 4:5 7:8]);
 errorbar(D_yrs,nansum(west_D).*917./(1000*10^9),sqrt(nansum((west_D-west_Dlower).^2)).*917./(1000*10^9),sqrt(nansum((west_Dupper-west_D).^2)).*917./(1000*10^9),'color',region_cmap(1,:),'linewidth',1.5); hold on;
-plot(D_yrs,nansum(west_D).*917./(1000*10^9),'-','color',region_cmap(1,:),'linewidth',2); hold on;
+vp(1) = plot(D_yrs,nansum(west_D).*917./(1000*10^9),'-','color',region_cmap(1,:),'linewidth',2); hold on;
 errorbar(D_yrs,nansum(southeast_D).*917./(1000*10^9),sqrt(nansum((southeast_D-southeast_Dlower).^2)).*917./(1000*10^9),sqrt(nansum((southeast_Dupper-southeast_D).^2)).*917./(1000*10^9),'color',region_cmap(2,:),'linewidth',1.5);
-plot(D_yrs,nansum(southeast_D).*917./(1000*10^9),'-','color',region_cmap(2,:),'linewidth',2); hold on;
+vp(2) = plot(D_yrs,nansum(southeast_D).*917./(1000*10^9),'-','color',region_cmap(2,:),'linewidth',2); hold on;
 errorbar(D_yrs,nansum(centraleast_D).*917./(1000*10^9),sqrt(nansum((centraleast_D-centraleast_Dlower).^2)).*917./(1000*10^9),sqrt(nansum((centraleast_Dupper-centraleast_D).^2)).*917./(1000*10^9),'color','k','linewidth',1.5);
 errorbar(D_yrs,nansum(centraleast_D).*917./(1000*10^9),sqrt(nansum((centraleast_D-centraleast_Dlower).^2)).*917./(1000*10^9),sqrt(nansum((centraleast_Dupper-centraleast_D).^2)).*917./(1000*10^9),'color',region_cmap(3,:),'linewidth',1);
 plot(D_yrs,nansum(centraleast_D).*917./(1000*10^9),'-','color','k','linewidth',2); hold on;
-plot(D_yrs,nansum(centraleast_D).*917./(1000*10^9),'-','color',region_cmap(3,:),'linewidth',1.5); hold on;
+vp(3) = plot(D_yrs,nansum(centraleast_D).*917./(1000*10^9),'-','color',region_cmap(3,:),'linewidth',1.5); hold on;
 errorbar(D_yrs,nansum(northeast_D).*917./(1000*10^9),sqrt(nansum((northeast_D-northeast_Dlower).^2)).*917./(1000*10^9),sqrt(nansum((northeast_Dupper-northeast_D).^2)).*917./(1000*10^9),'color',region_cmap(4,:),'linewidth',1.5);
-plot(D_yrs,nansum(northeast_D).*917./(1000*10^9),'-','color',region_cmap(4,:),'linewidth',2); hold on;
+vp(4) = plot(D_yrs,nansum(northeast_D).*917./(1000*10^9),'-','color',region_cmap(4,:),'linewidth',2); hold on;
 errorbar(D_yrs,nansum(north_D).*917./(1000*10^9),sqrt(nansum((north_D-north_Dlower).^2)).*917./(1000*10^9),sqrt(nansum((north_Dupper-north_D).^2)).*917./(1000*10^9),'color',region_cmap(5,:),'linewidth',1.5);
-plot(D_yrs,nansum(north_D).*917./(1000*10^9),'-','color',region_cmap(5,:),'linewidth',2); hold on;
+vp(5) = plot(D_yrs,nansum(north_D).*917./(1000*10^9),'-','color',region_cmap(5,:),'linewidth',2); hold on;
 set(gca,'ylim',[0 4],'xlim',[min(D_yrs)-0.5 max(D_yrs)+0.5],'xtick',[min(D_yrs):3:max(D_yrs)],...
     'xticklabel',[]); grid on;
 pos = get(gca,'position'); set(gca,'position',[0.09 pos4(2)+pos4(4)+0.04 0.47 (pos1(2)+pos1(4))-(pos4(2)+pos4(4)+0.04)]); 
 set(gca,'fontsize',20); ylabel('Discharge (Gt yr^{-1})','fontsize',20);
 text(min(D_yrs)+0.5,3.85,'a) regional discharge','fontsize',16);
+vleg = legend(vp,'west','southeast','central east','northeast','north'); set(vleg,'location','northeast');
 Dsub_perc = subplot(5,3,[10:11]);
 plot(D_yrs,100*sum(~isnan(west_normVall))./size(west_normVall,1),'-','color',region_cmap(1,:),'linewidth',2); hold on;
 plot(D_yrs,100*sum(~isnan(southeast_normVall))./size(southeast_normVall,1),'-','color',region_cmap(2,:),'linewidth',2); hold on;
@@ -563,29 +569,32 @@ plot(D_yrs,100*sum(~isnan(northeast_normVall))./size(northeast_normVall,1),'-','
 plot(D_yrs,100*sum(~isnan(north_normVall))./size(north_normVall,1),'-','color',region_cmap(5,:),'linewidth',2); hold on;
 set(gca,'ylim',[0 110],'ytick',[0:25:100],'xlim',[min(D_yrs)-0.5 max(D_yrs)+0.5],'xtick',[min(D_yrs):3:max(D_yrs)],...
     'xticklabel',[min(D_yrs):3:max(D_yrs)],'xticklabelrotation',90); grid on;
-pos = get(gca,'position'); set(gca,'position',[0.09 pos4(2)+0.04 0.47 pos4(4)-0.01]); 
+pos = get(gca,'position'); set(gca,'position',[0.09 pos4(2)+0.045 0.47 pos4(4)-0.01]); 
 set(gca,'fontsize',20); xlabel('Year','fontsize',20); ylabel('Glacier coverage (%)','fontsize',20);
 text(min(D_yrs)+0.5,95,'b) regional observation coverage','fontsize',16);
 termsub1 = subplot(5,3,13);
-he(1) = histogram(west_term(:,1),[-2500:100:500]); he(1).FaceColor = region_cmap(1,:); he(1).EdgeColor = 'k'; hold on;
-he(2) = histogram(southeast_term(:,1),[-2500:100:500]); he(2).FaceColor = region_cmap(2,:); he(2).EdgeColor = 'k'; hold on;
-he(3) = histogram(centraleast_term(:,1),[-2500:100:500]); he(3).FaceColor = region_cmap(3,:); he(3).EdgeColor = 'k'; hold on;
-he(4) = histogram(northeast_term(:,1),[-2500:100:500]); he(4).FaceColor = region_cmap(4,:); he(4).EdgeColor = 'k'; hold on;
-he(5) = histogram(north_term(:,1),[-2500:100:500]); he(5).FaceColor = region_cmap(5,:); he(5).EdgeColor = 'k'; hold on;
-set(gca,'ylim',[0 75],'xtick',[-3000:1000:1000],'xticklabelrotation',90); set(gca,'fontsize',20); ylabel('Glacier count','fontsize',20);
+he(1) = histogram(southeast_term(:,1),[-2500:100:500]); he(1).FaceColor = region_cmap(2,:); he(1).FaceAlpha = 1; he(1).EdgeColor = 'k'; hold on;
+he(2) = histogram(west_term(:,1),[-2500:100:500]); he(2).FaceColor = region_cmap(1,:); he(2).EdgeColor = 'k'; hold on;
+he(3) = histogram(centraleast_term(:,1),[-2500:100:500]); he(3).FaceColor = region_cmap(3,:); he(3).FaceAlpha = 0.75; he(3).EdgeColor = 'k'; hold on;
+he(4) = histogram(north_term(:,1),[-2500:100:500]); he(4).FaceColor = region_cmap(5,:); he(4).EdgeColor = 'k'; hold on;
+he(5) = histogram(northeast_term(:,1),[-2500:100:500]); he(5).FaceColor = region_cmap(4,:); he(5).FaceAlpha = 1; he(5).EdgeColor = 'k'; hold on;
+set(gca,'ylim',[0 75],'xtick',[-3000:1000:1000],...
+    'xticklabel',[-3:1:1],'xticklabelrotation',90); set(gca,'fontsize',20); 
+ylabel('Glacier count','fontsize',20);
 termpos = get(gca,'position'); 
-text(-2475,62,'c) ~1985-2000','fontsize',16);
+text(-2475,65,'c) ~1985-2000','fontsize',16);
 termsub2 = subplot(5,3,14);
-hl(1) = histogram(west_term(:,2),[-2500:100:500]); hl(1).FaceColor = region_cmap(1,:); hl(1).EdgeColor = 'k'; hold on;
-hl(2) = histogram(southeast_term(:,2),[-2500:100:500]); hl(2).FaceColor = region_cmap(2,:); hl(2).EdgeColor = 'k'; hold on;
-hl(3) = histogram(centraleast_term(:,2),[-2500:100:500]); hl(3).FaceColor = region_cmap(3,:); hl(3).EdgeColor = 'k'; hold on;
-hl(4) = histogram(northeast_term(:,2),[-2500:100:500]); hl(4).FaceColor = region_cmap(4,:); hl(4).EdgeColor = 'k'; hold on;
-hl(5) = histogram(north_term(:,2),[-2500:100:500]); hl(5).FaceColor = region_cmap(5,:); hl(5).EdgeColor = 'k'; hold on;
-set(gca,'ylim',[0 75],'yticklabel',[],'xtick',[-3000:1000:1000],'xticklabelrotation',90); set(gca,'fontsize',20); 
-xlbl = xlabel('Terminus change (m)','fontsize',20); set(xlbl,'position',[-2750 -25 -1]);
-text(-2475,62,'d) 2000-2015','fontsize',16);
-set(termsub2,'position',[0.30 pos5(2) 0.21 pos5(4)]);
-set(termsub1,'position',[0.09 pos5(2) 0.21 pos5(4)]);
+hl(1) = histogram(southeast_term(:,2),[-2500:100:500]); hl(1).FaceColor = region_cmap(2,:); hl(1).FaceAlpha = 1; hl(1).EdgeColor = 'k'; hold on;
+hl(2) = histogram(west_term(:,2),[-2500:100:500]); hl(2).FaceColor = region_cmap(1,:); hl(2).EdgeColor = 'k'; hold on;
+hl(3) = histogram(centraleast_term(:,2),[-2500:100:500]); hl(3).FaceColor = region_cmap(3,:); h1(3).FaceAlpha = 0.75; hl(3).EdgeColor = 'k'; hold on;
+hl(4) = histogram(north_term(:,2),[-2500:100:500]); hl(4).FaceColor = region_cmap(5,:); hl(4).EdgeColor = 'k'; hold on;
+hl(5) = histogram(northeast_term(:,2),[-2500:100:500]); hl(5).FaceColor = region_cmap(4,:); hl(5).FaceAlpha = 1; hl(5).EdgeColor = 'k'; hold on;
+set(gca,'ylim',[0 75],'yticklabel',[],'xtick',[-3000:1000:1000],...
+    'xticklabel',[-3:1:1],'xticklabelrotation',90); set(gca,'fontsize',20); 
+xlbl = xlabel('Terminus change (km)','fontsize',20); set(xlbl,'position',[-2750 -12 -1]);
+text(-2475,65,'d) 2000-2015','fontsize',16);
+set(termsub2,'position',[0.30 pos5(2) 0.21 pos5(4)-0.01]);
+set(termsub1,'position',[0.09 pos5(2) 0.21 pos5(4)-0.01]);
 
 %save the regional plots
 saveas(gcf,'GreenlandGIC-regional-timeseries.png','png'); saveas(gcf,'GreenlandGIC-regional-timeseries.eps','epsc');
