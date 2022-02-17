@@ -4,7 +4,7 @@
 
 %% initialize (run every time)
 
-disp('This code combines several old codes so there may be some hiccups running it through!');
+disp('This code should allow you to calculate discharge & analyze regional data');
 
 %loop through all the elevation data for each study site to locate the grounding line
 % clearvars; close all; warning off;
