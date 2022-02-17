@@ -61,85 +61,85 @@ for i = 1:length(term)
 %     disp(['glacier ',num2str(i),' of ',num2str(length(term))]);
     BoxID(i) = term(i).BoxID;
     
-%     %create thickness cross sections at the flux gate
-%     glacier_width = sqrt((term(i).gateX(1) - term(i).gateX(end)).^2 + (term(i).gateY(1)-term(i).gateY(end)).^2);
-%     gate_vel = nanmedian(term(i).fluxV,1); gate_width = term(i).fluxW;
-%     gate_H = NaN(size(gate_vel)); gate_Hmax = NaN(size(gate_vel)); gate_Hmin = NaN(size(gate_vel));
-%     
-% %         %if using the parabolic UW vs D trendline
-% %         parab_refs = find(gate_vel(1,:)*glacier_width<=max(f.xlims));
-% %         if ~isempty(parab_refs)
-% %             gate_H(1,parab_refs) = ((f.fit.p1.*((gate_vel(1,parab_refs)*glacier_width).^2) + f.fit.p2.*(gate_vel(1,parab_refs)*glacier_width) + f.fit.p3).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
-% %             gate_Hmin(1,parab_refs) = ((ci(1,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(1,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(1,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
-% %             gate_Hmax(1,parab_refs) = ((ci(2,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(2,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(2,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
-% %         end
-% %         clear parab_refs;
-% %         %extrapolate with linear trendlines if necessary
-% %         linear_refs = find(gate_vel(1,:)*glacier_width>max(f.xlims));
-% %         if ~isempty(linear_refs)
-% %             gate_H(1,linear_refs) = ((f.ext.p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-% %             gate_Hmin(1,linear_refs) = ((f.ext.cil_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.cil_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-% %             gate_Hmax(1,linear_refs) = ((f.ext.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.ciu_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-% %         end
-% %         clear linear_refs;
-% %         linear_refs = find(gate_vel(1,:)*glacier_width<min(f.xlims));
-% %         if ~isempty(linear_refs)
-% %             gate_H(1,linear_refs) = (f.int.p1.*(gate_vel(1,linear_refs)*glacier_width).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-% %             gate_Hmin(1,linear_refs) = ((f.int.cil_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-% %             gate_Hmax(1,linear_refs) = ((f.int.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
-% %         end
-% %         clear linear_refs;
-%     
-% %     %if using the linear UW vs D trendline
-% %     gate_H(1,:) = (UWfit.p1.*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
-% %     gate_Hmin(1,:) = (min(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
-% %     gate_Hmax(1,:) = (max(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
-%     
-% %     %if using the linear W/U vs H trendline
-% %     gate_H(1,:) = H_fit.*(glacier_width./gate_vel(1,:));
-% %     gate_Hmin(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
-% %     gate_Hmax(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
-% 
-%     %if using the logarithmic U vs H trendline
-%     gate_H(1,:) = UHfit.a.*log10(gate_vel(1,:))+UHfit.b.*gate_vel(1,:);
-%     gate_Hmin(1,:) = UHfit_min.a.*log10(gate_vel(1,:))+UHfit_min.b.*gate_vel(1,:);
-%     gate_Hmax(1,:) = UHfit_max.a.*log10(gate_vel(1,:))+UHfit_max.b.*gate_vel(1,:);
-%     
-%     %add H estimates to structure
-%     gate_H(gate_H<0) = 0; gate_Hmin(gate_Hmin<0) = 0; gate_Hmax(gate_Hmax<0) = 0;
-%     term(i).fluxH = gate_H; term(i).fluxHmax = gate_Hmax; term(i).fluxHmin = gate_Hmin;
-%     
-%     %construct discharge time series
-%     gate_D = term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1).*repmat(gate_width,size(term(i).fluxV,1),1);
-%     D = nansum(gate_D,2);
-%     %propagate errors
-%     gate_Verr = term(i).fluxVerr;
-%     gate_Werr = zeros(size(gate_width)); gate_Werr(1) = gate_Werr(1) + 15; gate_Werr(end) = gate_Werr(end) + 15; term(i).fluxWerr = gate_Werr;
-%     gate_Hposerr = repmat((term(i).fluxHmax-term(i).fluxH),size(term(i).fluxV,1),1); gate_Hnegerr = repmat((term(i).fluxHmin-term(i).fluxH),size(term(i).fluxV,1),1);
-%     gate_VHposcov = cov(gate_Hposerr,gate_Verr); gate_VHnegcov = cov(gate_Hnegerr,gate_Verr); 
-%     gate_Dposerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hposerr./term(i).fluxH.^2 +...
-%         2*repmat(gate_VHposcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
-%         repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
-%     gate_Dnegerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hnegerr./term(i).fluxH.^2 +...
-%         2*repmat(gate_VHnegcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
-%         repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
-%     Dposerr = sqrt(nansum(gate_Dposerr.^2,2)); Dnegerr = sqrt(nansum(gate_Dnegerr.^2,2)); 
-%     clear glacier_width gate_*;
-%     term(i).fluxD = D; term(i).fluxDmax = term(i).fluxD + Dposerr; term(i).fluxDmin = term(i).fluxD - Dnegerr; 
-%     term(i).fluxDerr = nanmean([Dposerr Dnegerr],2); term(i).fluxDyrs = D_yrs';
-%     
-% %     %save after every 50 glaciers
-% %     counter = counter+1;
-% %     if counter == 50
-% %         disp('resaving');
-% %         eval(cd_to_root);
-% %         save('Greenland_GIC_centerlines.mat','term','-v7.3');
-% %         counter = 0;
-% %         eval(cd_to_vels);
-% %     end
-%     
-%     %clear the old variables
-%     clear D Derr gate*
+    %create thickness cross sections at the flux gate
+    glacier_width = sqrt((term(i).gateX(1) - term(i).gateX(end)).^2 + (term(i).gateY(1)-term(i).gateY(end)).^2);
+    gate_vel = nanmedian(term(i).fluxV,1); gate_width = term(i).fluxW;
+    gate_H = NaN(size(gate_vel)); gate_Hmax = NaN(size(gate_vel)); gate_Hmin = NaN(size(gate_vel));
+    
+%         %if using the parabolic UW vs D trendline
+%         parab_refs = find(gate_vel(1,:)*glacier_width<=max(f.xlims));
+%         if ~isempty(parab_refs)
+%             gate_H(1,parab_refs) = ((f.fit.p1.*((gate_vel(1,parab_refs)*glacier_width).^2) + f.fit.p2.*(gate_vel(1,parab_refs)*glacier_width) + f.fit.p3).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
+%             gate_Hmin(1,parab_refs) = ((ci(1,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(1,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(1,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
+%             gate_Hmax(1,parab_refs) = ((ci(2,1).*((gate_vel(1,parab_refs)*glacier_width).^2) + ci(2,2).*(gate_vel(1,parab_refs)*glacier_width) + ci(2,3)).*(gate_width(parab_refs)/glacier_width))./(gate_vel(1,parab_refs).*gate_width(parab_refs));
+%         end
+%         clear parab_refs;
+%         %extrapolate with linear trendlines if necessary
+%         linear_refs = find(gate_vel(1,:)*glacier_width>max(f.xlims));
+%         if ~isempty(linear_refs)
+%             gate_H(1,linear_refs) = ((f.ext.p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+%             gate_Hmin(1,linear_refs) = ((f.ext.cil_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.cil_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+%             gate_Hmax(1,linear_refs) = ((f.ext.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width) + f.ext.ciu_p2).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+%         end
+%         clear linear_refs;
+%         linear_refs = find(gate_vel(1,:)*glacier_width<min(f.xlims));
+%         if ~isempty(linear_refs)
+%             gate_H(1,linear_refs) = (f.int.p1.*(gate_vel(1,linear_refs)*glacier_width).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+%             gate_Hmin(1,linear_refs) = ((f.int.cil_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+%             gate_Hmax(1,linear_refs) = ((f.int.ciu_p1.*(gate_vel(1,linear_refs)*glacier_width)).*(gate_width(linear_refs)/glacier_width))./(gate_vel(1,linear_refs).*gate_width(linear_refs));
+%         end
+%         clear linear_refs;
+    
+%     %if using the linear UW vs D trendline
+%     gate_H(1,:) = (UWfit.p1.*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
+%     gate_Hmin(1,:) = (min(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
+%     gate_Hmax(1,:) = (max(regional_UWfits).*(glacier_width.*gate_vel(1,:)))./(gate_width.*gate_vel(1,:));
+    
+%     %if using the linear W/U vs H trendline
+%     gate_H(1,:) = H_fit.*(glacier_width./gate_vel(1,:));
+%     gate_Hmin(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
+%     gate_Hmax(1,:) = H_ci(1).*(glacier_width./gate_vel(1,:));
+
+    %if using the logarithmic U vs H trendline
+    gate_H(1,:) = UHfit.a.*log10(gate_vel(1,:))+UHfit.b.*gate_vel(1,:);
+    gate_Hmin(1,:) = UHfit_min.a.*log10(gate_vel(1,:))+UHfit_min.b.*gate_vel(1,:);
+    gate_Hmax(1,:) = UHfit_max.a.*log10(gate_vel(1,:))+UHfit_max.b.*gate_vel(1,:);
+    
+    %add H estimates to structure
+    gate_H(gate_H<0) = 0; gate_Hmin(gate_Hmin<0) = 0; gate_Hmax(gate_Hmax<0) = 0;
+    term(i).fluxH = gate_H; term(i).fluxHmax = gate_Hmax; term(i).fluxHmin = gate_Hmin;
+    
+    %construct discharge time series
+    gate_D = term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1).*repmat(gate_width,size(term(i).fluxV,1),1);
+    D = nansum(gate_D,2);
+    %propagate errors
+    gate_Verr = term(i).fluxVerr;
+    gate_Werr = zeros(size(gate_width)); gate_Werr(1) = gate_Werr(1) + 15; gate_Werr(end) = gate_Werr(end) + 15; term(i).fluxWerr = gate_Werr;
+    gate_Hposerr = repmat((term(i).fluxHmax-term(i).fluxH),size(term(i).fluxV,1),1); gate_Hnegerr = repmat((term(i).fluxHmin-term(i).fluxH),size(term(i).fluxV,1),1);
+    gate_VHposcov = cov(gate_Hposerr,gate_Verr); gate_VHnegcov = cov(gate_Hnegerr,gate_Verr); 
+    gate_Dposerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hposerr./term(i).fluxH.^2 +...
+        2*repmat(gate_VHposcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
+        repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
+    gate_Dnegerr = abs(gate_D).*sqrt((gate_Verr./term(i).fluxV).^2 + gate_Hnegerr./term(i).fluxH.^2 +...
+        2*repmat(gate_VHnegcov(1,2),size(term(i).fluxV))./(term(i).fluxV.*repmat(term(i).fluxH,size(term(i).fluxV,1),1)) +...
+        repmat(term(i).fluxWerr./term(i).fluxW,size(term(i).fluxV,1),1).^2);
+    Dposerr = sqrt(nansum(gate_Dposerr.^2,2)); Dnegerr = sqrt(nansum(gate_Dnegerr.^2,2)); 
+    clear glacier_width gate_*;
+    term(i).fluxD = D; term(i).fluxDmax = term(i).fluxD + Dposerr; term(i).fluxDmin = term(i).fluxD - Dnegerr; 
+    term(i).fluxDerr = nanmean([Dposerr Dnegerr],2); term(i).fluxDyrs = D_yrs';
+    
+    %save after every 50 glaciers
+    counter = counter+1;
+    if counter == 50
+        disp('resaving');
+        eval(cd_to_root);
+        save('Greenland_GIC_centerlines.mat','term','-v7.3');
+        counter = 0;
+        eval(cd_to_vels);
+    end
+    
+    %clear the old variables
+    clear D Derr gate*
     
     %add to the entire GIC timeseries if it is confirmed as
     %marine-terminating and not in the Mankoff GrIS timeseries
