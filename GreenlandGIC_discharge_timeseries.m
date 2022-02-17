@@ -5,6 +5,7 @@
 %% initialize (run every time)
 
 disp('This code combines several old codes so there may be some hiccups running it through!');
+disp('Nevermind!');
 
 %loop through all the elevation data for each study site to locate the grounding line
 % clearvars; close all; warning off;
