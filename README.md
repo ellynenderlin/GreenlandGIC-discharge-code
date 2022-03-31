@@ -1,10 +1,36 @@
 # GreenlandPeriph-code
 The codes contained in this repo were used to estimate iceberg discharge for Greenland's peripheral marine-terminating glaciers. 
 
+# Overview
+The flux gate method to estimate iceberg discharge from marine-terminating glaciers calculate the flux of ice across a gate inland of the terminus as the product of the gate's width, thickness, and speed. For Greenland's peripheral glaciers, widths and speeds can easily be extracted from remote sensing datasets (we use Landsat images and ITS_LIVE velocities in the codes here) but thickness observations are scarce. These codes walk through terminus delineation, which is needed to know where to place the flux gate for multi-decadal time series, and the delineation of flux gates and extraction of velocities across the gates. Code and supporting data are also provided for the estimation of thicknesses for the peripheral glaciers, but this step could be omitted and subsequent code adjusted if thickness estimates are available for other glaciers and do not require empirical estimation using surface observations. 
+
+# Example of Regional Discharge Outputs & Data Availability
+For Greenland's peripheral glaciers, time series of discharge will be plotted as shown below. Discharge time series produced using these codes can be accessed at https://doi.org/10.18122/geo_data.5.boisestate. The flux gates for which these data were extracted can be found at https://doi.org/10.18122/cryogars_data.2.boisestate.
+![GreenlandGIC-discharge-timeseries](https://user-images.githubusercontent.com/51135732/161085285-480a501e-26bb-40bb-88cd-a6c41cd5072d.png)
+
+
+
 # Dependencies
-The codes are dependent on supporting datasets that must be downloaded separately by the user. These supporting data include, but may not be limited to, (1) Randoplh Glacier Inventory Outlines, (2) time-averaged ArcticDEM and individual time-stamped digital elevation models overlapping each glacier, (3) ITS_LIVE annual velocity time series, (4) Regional Atmospheric Climate Model annual surface mass balance time series, (5) Greenland Ice Sheet discharge data, (6) radar-derived glacier thicknesses, and (7) manually-drawn terminus boxes for each glacier of interest.
+The codes are dependent on supporting datasets that must be downloaded separately by the user. These supporting data include the following. Please notify Ellyn Enderlin (ellynenderlin@boisestate.edu) if you try to run these codes and find that you need additional data so that this list can be updated appropriately.
+
+(1) Randolph Glacier Inventory Outlines: https://www.glims.org/RGI/rgi60_dl.html 
+
+(2) time-averaged ArcticDEM: https://www.pgc.umn.edu/data/arcticdem/ 
+
+(3) ITS_LIVE annual velocity time series: https://nsidc.org/apps/itslive/
+
+(4) Regional Atmospheric Climate Model annual surface mass balance time series: https://www.projects.science.uu.nl/iceclimate/models/index.php
+
+(5) Greenland Ice Sheet discharge and thickness data: https://dataverse01.geus.dk/dataset.xhtml?persistentId=doi:10.22008/promice/data/ice_discharge/d/v02
+
+(6) radar-derived glacier thicknesses (GreenlandGIC_UWH_table.csv provided)
+
+(7) manually-drawn terminus boxes for each glacier of interest (can be executed in a GIS software or Matlab)
+
+(8: optional) individual time-stamped digital elevation models overlapping each glacier if you want to estimate thickness change over time (contact Polar Geospatial Center)
+
 The codes are generally designed so that paths and file names are specified in the first section, but there may be places where paths need to be changed if the files are not in the same relative locations as on the code developer's computer.
-Discharge time series produced using these codes can be accessed at https://doi.org/10.18122/geo_data.5.boisestate. The flux gates for which these data were extracted can be found at https://doi.org/10.18122/cryogars_data.2.boisestate.
+
 Use of these data or codes should be accompanied by a reference to Bollen, K. E, E. M. Enderlin, & R. Muhlheim, in press. Dynamic mass loss from Greenland’s marine-terminating peripheral glaciers. J. Glaciol.
 
 # Summary of codes in the order in which they should be executed
