@@ -3,11 +3,9 @@
 %%%  
 
 %% initialize (run every time)
+clearvars; close all; warning off;
 
-disp('This code should allow you to calculate discharge & analyze regional data');
-
-%loop through all the elevation data for each study site to locate the grounding line
-% clearvars; close all; warning off;
+%add the path to supporting Matlab functions
 addpath('/users/ellynenderlin/Research/miscellaneous/general-code');
 
 %specify the root directory for project-specific files
@@ -16,7 +14,7 @@ root_dir = '/Users/ellynenderlin/Research/NASA_GreenlandPeriph-Mapping/'; %inclu
 misc_dir = '/Users/ellynenderlin/Research/miscellaneous/'; %including trailing /
 
 %grab the velocity years from the velocity map filenames
-cd_to_misc = ['cd ',misc_dir]; eval(cd_to_misc);
+cd(misc_dir);
 vel_mosaic = dir('Greenland-ITSLIVE*');
 D_yrs = str2num(vel_mosaic.name(end-8:end-5)):1:str2num(vel_mosaic.name(end-3:end));
 
@@ -25,7 +23,7 @@ modays = [31 28 31 30 31 30 31 31 30 31 30 31]; cumdays = [0 cumsum(modays(1:end
 leap_modays = [31 29 31 30 31 30 31 31 30 31 30 31]; leap_cumdays = [0 cumsum(leap_modays(1:end-1))];
 
 %load term data structure containing flux gates & empirical scaling equation
-cd_to_root = ['cd ',root_dir]; eval(cd_to_root);
+cd(root_dir);
 load Greenland_GIC_centerlines.mat;
 
 %flag Mankoff glaciers & those identified as land-terminating
@@ -132,7 +130,7 @@ for i = 1:length(term)
 % %     counter = counter+1;
 % %     if counter == 50
 % %         disp('resaving');
-% %         eval(cd_to_root);
+% %         cd(root_dir);
 % %         save('Greenland_GIC_centerlines.mat','term','-v7.3');
 % %         counter = 0;
 % %         eval(cd_to_vels);
@@ -152,7 +150,7 @@ for i = 1:length(term)
     end
     term(i).fluxVavg(term(i).fluxVavg <= 0) = NaN;
 end
-eval(cd_to_root);
+cd(root_dir);
 % save('Greenland_GIC_centerlines.mat','term','-v7.3'); disp('date resaved');
 
 
@@ -309,7 +307,7 @@ subplot(suba); text(min(D_yrs)+0.5,min(get(gca,'ylim'))+0.95*(max(get(gca,'ylim'
 
 %save the time series
 %move to figure directory
-cd_to_root = ['cd ',root_dir]; eval(cd_to_root);
+cd_to_root = ['cd ',root_dir]; cd(root_dir);
 cd figures
 saveas(gcf,'GreenlandGIC-discharge-timeseries.png','png'); saveas(gcf,'GreenlandGIC-discharge-timeseries.eps','epsc');
 cd ..
@@ -349,7 +347,7 @@ fprintf('Median discharge from 1985-1998 with filled gaps AND assumed uniform ch
 fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps AND assumed uniform change = %4.2f Gt/yr\n',(nanmedian(nansum(Dfilled(:,15:end)))-(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete))).*917./(1000*10^9))
 
 % %resave term structure
-% eval(cd_to_root);
+% cd(root_dir);
 % save('Greenland_GIC_centerlines.mat','term','-v7.3'); disp('date resaved');
 
 %% plot regional discharge time series & velocity boxplots
@@ -494,7 +492,7 @@ disp(['percentage discharge: 1985-1998 = ',num2str(round(100*nanmedian(nansum(no
 
 
 %move to figure directory
-cd_to_root = ['cd ',root_dir]; eval(cd_to_root);
+cd_to_root = ['cd ',root_dir]; cd(root_dir);
 cd figures
 
 
