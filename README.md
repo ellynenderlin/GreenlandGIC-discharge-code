@@ -1,4 +1,4 @@
-# GreenlandPeriph-code
+# GreenlandGIC-discharge-code
 The codes contained in this repo were used to estimate iceberg discharge for Greenland's peripheral marine-terminating glaciers. 
 
 # Overview
