@@ -125,9 +125,9 @@ D_pre = nanmean(nansum(Dtotal(:,1:14),1));%mean of annual average discharge from
 D_post = nanmean(nansum(Dtotal(:,15:end),1));
 % D_anom = D_ann_avg(:,15:end)-D_pre; %subtract mean discharge pre-anomaly from annual average for remainder of record (1999-2018)
 disp(['Greenland GIC discharge: ']);
-disp(['Means: 1985-1998 = ',num2str(D_pre.*917./(1000*10^9)),' & 1999-2018 = ',num2str(D_post.*917./(1000*10^9)),' Gt/yr']);
-disp(['1985-1998 median +/- MAD = ',num2str(nanmedian(nansum(Dtotal(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dtotal(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dtotal(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dtotal(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['Means: 1985-1998 = ',num2str(D_pre.*917./(1000*10^9)),' & 1999-2018 = ',num2str(D_post.*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1985-1998 median +/- MAD = ',num2str(nanmedian(nansum(Dtotal(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dtotal(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dtotal(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dtotal(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 
 % define RGB matrices for colors on discharge plot
 cmap = [0 0 0; 123,50,148; 194,165,207; 166,219,160; 0,136,55]./255;
@@ -144,9 +144,9 @@ for i = 1:length(term)
     end
 end
 disp(['glaciers with complete time series = ', num2str(sum(~isnan(Dfiltered(:,1))))]);
-disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfiltered(:,1:14),1)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfiltered(:,15:end),1)).*917./(1000*10^9)),' Gt/yr']);
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfiltered(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfiltered(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfiltered(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfiltered(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfiltered(:,1:14),1)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfiltered(:,15:end),1)).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfiltered(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfiltered(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfiltered(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfiltered(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 
 %fill in data gaps from 1985-1998 w/ 1985-1998 means & from 1999-2018
 %with 1999-2018 means
@@ -177,9 +177,9 @@ for i = 1:size(Dtotal)
 end
 Dfilled_err = sqrt(nansum((Dfilled-Dfilled_lower).^2));
 disp('gap-filled time series...')
-disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfilled(:,1:14),1)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' Gt/yr']);
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfilled(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfilled(:,1:14),1)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfilled(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 
 %estimate average discharge for 1985-1998 for glaciers w/o data by assuming
 %that the relative change is the same for those glaciers as the ones with
@@ -190,12 +190,12 @@ Dearly_incomplete = nanmean(Dlate_incomplete,2)./(1+nanmedian((nanmean(Dlate_com
 Dearly_incompleteMIN = nanmean(Dlate_incomplete,2)./(1+(nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2))+mad((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2),1)));
 Dearly_incompleteMAX = nanmean(Dlate_incomplete,2)./(1+(nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2))-mad((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2),1)));
 disp('gap-filled time series & uniform relative change...')
-disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' Gt/yr']);
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,1:14),1)+nansum(Dearly_incomplete),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dfilled(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dfilled(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 
 
-%plot glaciers with average annual D > 0.05 Gt/yr
+%plot glaciers with average annual D > 0.05 Gt a^{-1}
 Dbig = NaN(size(Dtotal)); Dbig_err = NaN(size(Dtotal_err)); Dbig_upper = NaN(size(Dtotal_err)); Dbig_lower = NaN(size(Dtotal_err));
 for i = 1:size(Dtotal)
     if nanmean(Dtotal(i,:)).*917./(1000*10^9) > 0.05 && isempty(find(land_BoxID == term(i).BoxID)) && isempty(find(Mankoff_BoxID == term(i).BoxID))
@@ -203,10 +203,10 @@ for i = 1:size(Dtotal)
         Dbig_upper(i,:) = Dupper(i,:); Dbig_lower(i,:) = Dlower(i,:);
     end
 end
-disp(['glaciers D>0.05 Gt/yr= ', num2str(sum(~isnan(Dbig(:,1))))]);
-disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dbig(:,1:14),1)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dbig(:,15:end),1)).*917./(1000*10^9)),' Gt/yr']);
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dbig(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dbig(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dbig(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dbig(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['glaciers D>0.05 Gt a^{-1}= ', num2str(sum(~isnan(Dbig(:,1))))]);
+disp(['Means: 1985-1998 = ',num2str(nanmean(nansum(Dbig(:,1:14),1)).*917./(1000*10^9)),' & 1999-2018 = ',num2str(nanmean(nansum(Dbig(:,15:end),1)).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(Dbig(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dbig(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(Dbig(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(Dbig(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 
 
 %PLOT TIMESERIES
@@ -233,9 +233,9 @@ legend(pl,['all (n=',num2str(length(Dtotal)),')'],...
     ['filled time gaps (n=',num2str(round(nanmean(sum(~isnan(Dfilled(:,1:14)))))),')'],...
     ['filled time gaps + uniform change (n=',num2str(round(nanmean(sum(~isnan(Dfilled(:,15:end)))))),')'],...
     ['complete timeseries (n=',num2str(sum(~isnan(Dfiltered(:,end)))),')'],...
-    ['D>0.05 Gt/yr (n=',num2str(sum(~isnan(Dbig(:,1)))),')'], 'Location', 'southeast','fontsize',16);
-% title('Annual GICs Discharge 1985-2018 (Gt/yr)');
-ylabel('Discharge (Gt/yr)'); set(gca,'FontSize',20,'xlim',[min(D_yrs) max(D_yrs)],...
+    ['D>0.05 Gt a^{-1} (n=',num2str(sum(~isnan(Dbig(:,1)))),')'], 'Location', 'southeast','fontsize',16);
+% title('Annual GICs Discharge 1985-2018 (Gt a^{-1})');
+ylabel('Discharge (Gt a^{-1})'); set(gca,'FontSize',20,'xlim',[min(D_yrs) max(D_yrs)],...
     'xtick',[min(D_yrs):3:max(D_yrs)],'xticklabel',[],'ylim',[0 6.5]); grid on;
 
 
@@ -299,11 +299,11 @@ fprintf('Percent width of glaciers w/o pre-1999 data = %3.1f percent\n',(nansum(
 fprintf('Percent discharge by glaciers w/o pre-1999 data = %3.1f percent\n',nanmean(nansum(Dlate_incomplete,1)./nansum(Dfilled(:,15:end),1))*100);
 fprintf('Median percent change in discharge by glaciers w/ complete gap-filled records = %3.1f percent\n',nanmedian((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2))*100);
 fprintf('MAD percent change in discharge by glaciers w/ complete gap-filled records = %3.1f percent\n',mad((nanmean(Dlate_complete,2)-nanmean(Dearly_complete,2))./nanmean(Dearly_complete,2),1)*100);
-fprintf('Median discharge from 1985-1998 with filled gaps = %4.2f Gt/yr\n',nanmedian(nansum(Dfilled(:,1:14))).*917./(1000*10^9))
-fprintf('Median discharge from 1999-2018 with filled gaps = %4.2f Gt/yr\n',nanmedian(nansum(Dfilled(:,15:end))).*917./(1000*10^9))
-fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps = %4.2f Gt/yr\n',(nanmedian(nansum(Dfilled(:,15:end)))-nanmedian(nansum(Dfilled(:,1:14)))).*917./(1000*10^9))
-fprintf('Median discharge from 1985-1998 with filled gaps AND assumed uniform change= %4.2f Gt/yr\n',(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete)).*917./(1000*10^9))
-fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps AND assumed uniform change = %4.2f Gt/yr\n',(nanmedian(nansum(Dfilled(:,15:end)))-(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete))).*917./(1000*10^9))
+fprintf('Median discharge from 1985-1998 with filled gaps = %4.2f Gt a^{-1}\n',nanmedian(nansum(Dfilled(:,1:14))).*917./(1000*10^9))
+fprintf('Median discharge from 1999-2018 with filled gaps = %4.2f Gt a^{-1}\n',nanmedian(nansum(Dfilled(:,15:end))).*917./(1000*10^9))
+fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps = %4.2f Gt a^{-1}\n',(nanmedian(nansum(Dfilled(:,15:end)))-nanmedian(nansum(Dfilled(:,1:14)))).*917./(1000*10^9))
+fprintf('Median discharge from 1985-1998 with filled gaps AND assumed uniform change= %4.2f Gt a^{-1}\n',(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete)).*917./(1000*10^9))
+fprintf('Median discharge change from 1985-1998 to 1999-2018 with filled gaps AND assumed uniform change = %4.2f Gt a^{-1}\n',(nanmedian(nansum(Dfilled(:,15:end)))-(nanmedian(nansum(Dfilled(:,1:14)))+nansum(Dearly_incomplete))).*917./(1000*10^9))
 
 %% plot regional discharge time series & velocity boxplots
 close all;
@@ -415,32 +415,32 @@ for i = 1:length(term)
 end
 disp('Regional discharges:');
 disp('west');
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(west_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(west_D(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(west_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(west_D(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(west_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(west_D(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(west_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(west_D(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 disp(['percentage of glaciers = ',num2str(round(100*size(west_normVall,1)./size(Dtotal,1),1)),'%']);
 disp(['percentage discharge: 1985-1998 = ',num2str(round(100*nanmedian(nansum(west_D(:,1:14),1))./nanmedian(nansum(Dtotal(:,1:14),1)),1)),'% & 1999-218 = ',...
     num2str(round(100*nanmedian(nansum(west_D(:,15:end),1))./nanmedian(nansum(Dtotal(:,15:end),1)),1)),'%']);
 disp('southeast');
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(southeast_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(southeast_D(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(southeast_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(southeast_D(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(southeast_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(southeast_D(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(southeast_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(southeast_D(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 disp(['percentage of glaciers = ',num2str(round(100*size(southeast_normVall,1)./size(Dtotal,1),1)),'%']);
 disp(['percentage discharge: 1985-1998 = ',num2str(round(100*nanmedian(nansum(southeast_D(:,1:14),1))./nanmedian(nansum(Dtotal(:,1:14),1)),1)),'% & 1999-218 = ',...
     num2str(round(100*nanmedian(nansum(southeast_D(:,15:end),1))./nanmedian(nansum(Dtotal(:,15:end),1)),1)),'%']);
 disp('central east');
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(centraleast_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(centraleast_D(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(centraleast_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(centraleast_D(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(centraleast_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(centraleast_D(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(centraleast_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(centraleast_D(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 disp(['percentage of glaciers = ',num2str(round(100*size(centraleast_normVall,1)./size(Dtotal,1),1)),'%']);
 disp(['percentage discharge: 1985-1998 = ',num2str(round(100*nanmedian(nansum(centraleast_D(:,1:14),1))./nanmedian(nansum(Dtotal(:,1:14),1)),1)),'% & 1999-218 = ',...
     num2str(round(100*nanmedian(nansum(centraleast_D(:,15:end),1))./nanmedian(nansum(Dtotal(:,15:end),1)),1)),'%']);
 disp('northeast');
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(northeast_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(northeast_D(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(northeast_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(northeast_D(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(northeast_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(northeast_D(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(northeast_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(northeast_D(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 disp(['percentage of glaciers = ',num2str(round(100*size(northeast_normVall,1)./size(Dtotal,1),1)),'%']);
 disp(['percentage discharge: 1985-1998 = ',num2str(round(100*nanmedian(nansum(northeast_D(:,1:14),1))./nanmedian(nansum(Dtotal(:,1:14),1)),1)),'% & 1999-218 = ',...
     num2str(round(100*nanmedian(nansum(northeast_D(:,15:end),1))./nanmedian(nansum(Dtotal(:,15:end),1)),1)),'%']);
 disp('north');
-disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(north_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(north_D(:,1:14),1),1).*917./(1000*10^9)),' Gt/yr']);
-disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(north_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(north_D(:,15:end),1),1).*917./(1000*10^9)),' Gt/yr']);
+disp(['1985-1998 median +/ MAD = ',num2str(nanmedian(nansum(north_D(:,1:14),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(north_D(:,1:14),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
+disp(['1999-2018 median +/- MAD = ',num2str(nanmedian(nansum(north_D(:,15:end),1)).*917./(1000*10^9)),' +/- ',num2str(mad(nansum(north_D(:,15:end),1),1).*917./(1000*10^9)),' Gt a^{-1}']);
 disp(['percentage of glaciers = ',num2str(round(100*size(north_normVall,1)./size(Dtotal,1),1)),'%']);
 disp(['percentage discharge: 1985-1998 = ',num2str(round(100*nanmedian(nansum(north_D(:,1:14),1))./nanmedian(nansum(Dtotal(:,1:14),1)),1)),'% & 1999-218 = ',...
     num2str(round(100*nanmedian(nansum(north_D(:,15:end),1))./nanmedian(nansum(Dtotal(:,15:end),1)),1)),'%']);
@@ -509,7 +509,7 @@ vp(5) = plot(D_yrs,nansum(north_D).*917./(1000*10^9),'-','color',region_cmap(5,:
 set(gca,'ylim',[0 4],'xlim',[min(D_yrs)-0.5 max(D_yrs)+0.5],'xtick',[min(D_yrs):3:max(D_yrs)],...
     'xticklabel',[]); grid on;
 pos = get(gca,'position'); set(gca,'position',[0.09 pos4(2)+pos4(4)+0.04 0.47 (pos1(2)+pos1(4))-(pos4(2)+pos4(4)+0.04)]); 
-set(gca,'fontsize',20); ylabel('Discharge (Gt yr^{-1})','fontsize',20);
+set(gca,'fontsize',20); ylabel('Discharge (Gt a^{-1})','fontsize',20);
 text(min(D_yrs)+0.5,3.85,'a ','fontsize',16);
 vleg = legend(vp,'west (WE)','southeast (SE)','central east (CE)','northeast (NE)','north (NO)'); set(vleg,'location','northeast');
 Dsub_perc = subplot(5,3,[10:11]);
@@ -655,12 +655,12 @@ subplot(sub_early); set(gca,'fontsize',20,'xlim',[-120 48],...
     'ylim',[-36 12],'ytick',[-36:12:12]); grid on;
 xlims = get(gca,'xlim'); ylims = get(gca,'ylim');
 text(min(xlims)+0.05*(max(xlims)-min(xlims)),min(ylims)+0.05*(max(ylims)-min(ylims)),'a) ~1985-2000');
-xlabel('Terminus change rate (m/yr)','fontsize',20); ylabel('Speed change rate (m/yr)','fontsize',20);
+xlabel('Terminus change rate (m a^{-1})','fontsize',20); ylabel('Speed change rate (m a^{-1})','fontsize',20);
 subplot(sub_late); set(gca,'fontsize',20,'xlim',[-120 48],...
     'ylim',[-36 12],'ytick',[-36:12:12],'yticklabel',[]); grid on;
 text(min(xlims)+0.05*(max(xlims)-min(xlims)),min(ylims)+0.05*(max(ylims)-min(ylims)),'b) 2000-2015');
 set(sub_early,'position',[0.13 0.15 0.4 0.7875]); set(sub_late,'position',[0.55 0.15 0.4 0.7875]); 
-xlabel('Terminus change rate (m/yr)','fontsize',20); %ylabel('Speed change rate (m/yr)','fontsize',20);
+xlabel('Terminus change rate (m a^{-1})','fontsize',20); %ylabel('Speed change rate (m a^{-1})','fontsize',20);
 saveas(gcf,[root_dir,'figures/','GreenlandGIC-speed-vs-termchange_subplots.png'],'png'); 
 saveas(gcf,[root_dir,'figures/','GreenlandGIC-speed-vs-termchange_subplots.eps'],'epsc');
 
@@ -681,7 +681,7 @@ disp(['median: 1985-2000 = ',num2str(nanmedian(GIC_dterm(:,1))),' +/- ',num2str(
     ' m & 2000-2015 = ',num2str(nanmedian(GIC_dterm(:,2))),' +/- ',num2str(mad(GIC_dterm(:,2),1)),' m']);
 disp('Terminus change rate:');
 disp(['median: 1985-2000 = ',num2str(nanmedian(GIC_dtermdyr(:,1))),' +/- ',num2str(mad(GIC_dtermdyr(:,1),1)),...
-    ' m/yr & 2000-2015 = ',num2str(nanmedian(GIC_dtermdyr(:,2))),' +/- ',num2str(mad(GIC_dtermdyr(:,2),1)),' m/yr']);
+    ' m a^{-1} & 2000-2015 = ',num2str(nanmedian(GIC_dtermdyr(:,2))),' +/- ',num2str(mad(GIC_dtermdyr(:,2),1)),' m a^{-1}']);
 
 %% compare regional speed time series to summer & winter NAO indices
 disp('Must run the initialization section & the section immediately before this one');

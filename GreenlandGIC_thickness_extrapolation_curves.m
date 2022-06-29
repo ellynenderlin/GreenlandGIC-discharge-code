@@ -177,7 +177,7 @@ end
 %export csv as a table with headers
 Htable = array2table([avg_thick(:,1:4) avg_thick(:,6) avg_thick(:,8:11)]);
 Htable.Properties.VariableNames = [{'X'},{'Y'},...
-    {'BoxID'},{'Thickness (m)'},{'Speed (m/yr)'},{'Width (m)'},...
+    {'BoxID'},{'Thickness (m)'},{'Speed (m a^{-1})'},{'Width (m)'},...
     {'Speed/Width'},{'SpeedxWidth'},{'SpeedxWidthxThickness'}];
 Htable.Properties.VariableUnits = [{'m (Greenland Polar Stereo)'},{'m (Greenland Polar Stereo)'},...
     {'unitless'},{'m'},{'m yr^-1'},{'m'},...
@@ -192,7 +192,7 @@ plot(avg_thick(n,6),avg_thick(n,4),'+k','linewidth',1); %velocity vs thickness
 scatter(GICu,GICh,36,GICregion_colors,'s','filled','markeredgecolor','k','linewidth',1.5); %average velocity vs thickness (all GICs with data)
 scatter(Mu,Mh,36,GrISregion_colors,'d','filled','markeredgecolor','k','linewidth',1.5); %velocity vs thickness (all overlapping GrISs)
 set(gca,'fontsize',14); grid on;
-xlabel('speed (m yr^{-1})'); ylabel('thickness (m)');
+xlabel('speed (m  a^{-1})'); ylabel('thickness (m)');
 subplot(2,3,2);
 scatter(avg_thick(:,8),avg_thick(:,4),36,region_colors,'filled','markeredgecolor','k','linewidth',1); hold on;
 plot(avg_thick(n,8),avg_thick(n,4),'+k','linewidth',1); %width vs thickness
@@ -206,14 +206,14 @@ plot(avg_thick(n,10),avg_thick(n,4),'+k','linewidth',1); %velocity x width vs th
 scatter(GICu.*GICw,GICh,36,GICregion_colors,'s','filled','markeredgecolor','k','linewidth',1.5); %average velocity X width vs thickness (all GICs with data)
 scatter(Mu.*Mw,Mh,36,GrISregion_colors,'d','filled','markeredgecolor','k','linewidth',1.5); %velocity X width vs thickness (all overlapping GrISs)
 set(gca,'fontsize',14); grid on;
-xlabel('speed x width (m^2 yr^{-1})'); ylabel('thickness (m)');
+xlabel('speed x width (m^2  a^{-1})'); ylabel('thickness (m)');
 subplot(2,3,4);
 scatter(avg_thick(:,6)./avg_thick(:,8),avg_thick(:,4),36,region_colors,'filled','markeredgecolor','k','linewidth',1); hold on;
 plot(avg_thick(n,9),avg_thick(n,4),'+k','linewidth',1); %velocity/width vs thickness
 scatter(GICu./GICw,GICh,36,GICregion_colors,'s','filled','markeredgecolor','k','linewidth',1.5); %average velocity/width vs thickness (all GICs with data)
 scatter(Mu./Mw,Mh,36,GrISregion_colors,'d','filled','markeredgecolor','k','linewidth',1.5); %velocity/width vs thickness (all overlapping GrISs)
 set(gca,'fontsize',14); grid on;
-xlabel('speed/width (yr^{-1})'); ylabel('thickness (m)');
+xlabel('speed/width ( a^{-1})'); ylabel('thickness (m)');
 subplot(2,3,5);
 scatter(avg_thick(:,8)./avg_thick(:,6),avg_thick(:,4),36,region_colors,'filled','markeredgecolor','k','linewidth',1); hold on;
 plot(avg_thick(n,8)./avg_thick(n,6),avg_thick(n,4),'+k','linewidth',1); %width/velocity vs thickness
@@ -230,7 +230,7 @@ xlabel('width/speed (yr)'); ylabel('thickness (m)');
 % plot(GICu.*GICw,GICd,'+m','linewidth',1); %average velocity vs thickness (all GICs with data)
 % plot(Mu.*Mw,Md,'xm','linewidth',1); %velocity vs thickness (all overlapping GrISs)
 % set(gca,'fontsize',14); grid on;
-% xlabel('speed x width (m^2 yr^{-1})'); ylabel('discharge (m^3 yr^{-1})');
+% xlabel('speed x width (m^2  a^{-1})'); ylabel('discharge (m^3  a^{-1})');
 saveas(gcf,[figure_dir,'GreenlandGIC_test-empirical-UWH-relationship_subplots.png'],'png');
 saveas(gcf,[figure_dir,'GreenlandGIC_test-empirical-UWH-relationship_subplots.eps'],'epsc');
 
@@ -254,13 +254,13 @@ end
 %plot histograms of velocity & width combinations
 histogramfig = figure; set(gcf,'position',[50 50 1200 600]);
 subplot(2,3,1);
-histogram(U_distribution); xlabel('speed (m yr^{-1})');
+histogram(U_distribution); xlabel('speed (m  a^{-1})');
 subplot(2,3,2);
 histogram(W_distribution); xlabel('width (m)');
 subplot(2,3,3);
-histogram(UxW_distribution); xlabel('speed x width (m^2 yr^{-1})');
+histogram(UxW_distribution); xlabel('speed x width (m^2  a^{-1})');
 subplot(2,3,4);
-histogram(UdivW_distribution); xlabel('speed/width (yr^{-1})'); 
+histogram(UdivW_distribution); xlabel('speed/width ( a^{-1})'); 
 subplot(2,3,5);
 histogram(WdivU_distribution); xlabel('width/speed (yr)'); 
 
@@ -321,7 +321,7 @@ subb = subplot(2,1,2);
 hist_U = histogram(U_distribution,[0:10:600],'FaceColor',[0 0 0],'FaceAlpha',1);
 set(subb,'fontsize',20,'xlim',[0 600],'ylim',[0 4000]);
 set(gca,'YScale','log','ytick',[1 10 100 1000],'yticklabel',[1 10 100 1000]);
-xlabel('speed (m yr^{-1})','fontsize',20); ylabel('count','fontsize',20); 
+xlabel('speed (m a^{-1})','fontsize',20); ylabel('count','fontsize',20); 
 set(subb,'position',[0.1300 0.1100 0.7750 0.1800]);
 subplot(subb); text(min(get(gca,'xlim'))+0.02*(max(get(gca,'xlim'))-min(get(gca,'xlim'))),min(get(gca,'ylim'))+0.50*(max(get(gca,'ylim'))-min(get(gca,'ylim'))),'b','FontSize',20);
 set(suba,'position',[0.1300 0.3200 0.7750 0.6300]);
